@@ -8,6 +8,9 @@
 <body>
     <h1>Something went wrong</h1>
     <p>Sorry about that.</p>
-    <pre><%= message %></pre>
+    <pre><%= errorMessage.text %></pre>
+    <% if (errorMessage.goBackButton) { %>
+        <a href="<%= errorMessage.goBackButtonUrl %>"><%= errorMessage.goBackButtonText %></a>
+    <% } %>
 </body>
 </html>

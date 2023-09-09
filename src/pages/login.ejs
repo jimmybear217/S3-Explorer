@@ -6,6 +6,28 @@
     <title>S3 Explorer - Login</title>
 </head>
 <body>
-    
+    <% if (error) { %>
+        <p>Invalid username or password</p>
+    <% } %>
+    <% if (registerSuccess) { %>
+        <p>Thank you for registering, you can now log in.</p>
+    <% } %>
+    <fieldset>
+        <legend>Login</legend>
+        <form method="post">
+            <input type="text" name="inputUsername" placeholder="Username" />
+            <input type="password" name="inputPassword" placeholder="Password" />
+            <input type="submit" value="Login" />
+        </form>
+    </fieldset>
+    <fieldset>
+        <legend>Register</legend>
+        <form method="post" action="/register">
+            <input type="text" name="inputUsername" placeholder="Username" />
+            <input type="email" name="inputEmail" placeholder="Email" />
+            <input type="password" name="inputPassword" placeholder="Password" />
+            <input type="submit" value="Register" />
+        </form>
+    </fieldset>
 </body>
 </html>

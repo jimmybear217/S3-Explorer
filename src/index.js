@@ -1,14 +1,16 @@
 const express = require('express');
 const session = require('express-session');
 const S3 = require('./s3Interface.js');
-const randomKey = require('./crypto.js').randomKey;
+const randomKey = require('./cryptotools.js').randomKey;
 const path = require('path');
 const ejs = require('ejs');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const settings = require('./settings.json');
+const loginHandler = require('./loginHandler.js');
+const { encode } = require('punycode');
 
-
+// init express
 const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,12 +25,27 @@ app.use(session({
     }
 }));
 
+// setup express server pages
 app.get('/', (req, res) => {
-  console.log(req.session);
-  ejs.renderFile(path.join(__dirname, 'pages/index.ejs'), { session: req.session }, {}, function(err, str){
+  ejs.renderFile(path.join(__dirname, 'pages/index.ejs'), { session: req.session, showLogin: settings.allowLogin }, {}, function(err, str){
     if (err) {
       console.log(err);
       res.redirect('/error?code=500');
+    } else {
+      res.send(str);
+    }
+  });
+});
+
+app.get('/error', (req, res) => {
+  if (!req.query.code || !settings.errors[req.query.code]) {
+    code = 501;
+  } else {
+    code = req.query.code;
+  }
+  ejs.renderFile(path.join(__dirname, 'pages/error.ejs'), { errorMessage: settings.errors[code] }, {}, function(err, str){
+    if (err) {
+      res.send("No error page found");
     } else {
       res.send(str);
     }
@@ -56,11 +73,6 @@ app.get('/config', (req, res) => {
 });
 
 app.post('/config', (req, res) => {
-  // if (!req.body.inputBucket || !req.body.inputRegion || !req.body.inputAccessKeyId || !req.body.inputSecretAccessKey) {
-  //   res.redirect('/config', 400, 'Missing required fields');
-  //   console.log('Missing required fields');
-  //   return
-  // }
   req.session.aws = {
     bucket: (!req.body.inputBucket) ? "" : req.body.inputBucket,
     region: (!req.body.inputRegion) ? "" : req.body.inputRegion,
@@ -71,23 +83,87 @@ app.post('/config', (req, res) => {
   res.redirect('/config');
 });
 
-app.get('/error', (req, res) => {
-  var errorMessages = {
-    500: "Internal Server Error",
-    404: "Page Not Found",
-  }
-  if (!errorMessages[req.query.code]) {
-    req.query.code = 500;
-  }
-  errorMessageText = errorMessages[req.query.code]
-  ejs.renderFile(path.join(__dirname, 'pages/error.ejs'), { message: errorMessageText }, {}, function(err, str){
-    if (err) {
-      res.send("No error page found");
+if (settings.allowLogin) {
+  app.get('/login', (req, res) => {
+    ejs.renderFile(path.join(__dirname, 'pages/login.ejs'), { session: req.session, error: (req.query.error == 1), registerSuccess: (req.query.success == 1) }, {}, function(err, str){
+      if (err) {
+        console.log(err);
+        res.redirect('/error?code=500');
+      } else {
+        res.send(str);
+      }
+    });
+  });
+
+  app.post('/login', (req, res) => {
+    var lh = new loginHandler();
+    if (!req.body.inputUsername || !req.body.inputPassword) {
+      res.redirect('/login?error=1');
+      return;
+    }
+    req.body.inputUsername = encodeURIComponent(req.body.inputUsername); // prevent XSS
+    if (lh.login(req.body.inputUsername, req.body.inputPassword)) {
+      req.session.loggedIn = true;
+      req.session.username = req.body.inputUsername;
+      req.session.save();
+      if (req.query.nextUrl) {
+        res.redirect(req.query.nextUrl);
+      } else {
+        res.redirect('/');
+      }
     } else {
-      res.send(str);
+      res.redirect('/login?nextUrl=' + (req.query.nextUrl) ? encodeURIComponent(req.query.nextUrl) : ""  + '&error=1');
     }
   });
+
+  app.post('/register', (req, res) => {
+    var lh = new loginHandler();
+    if (!req.body.inputUsername || !req.body.inputPassword || !req.body.inputEmail) {
+      res.redirect('/login?error=1');
+      return;
+    }
+    req.body.inputUsername = encodeURIComponent(req.body.inputUsername); // prevent XSS
+    if (lh.createUser(req.body.inputUsername, req.body.inputEmail, req.body.inputPassword)) {
+      res.redirect('/login?success=1');
+    } else {
+      res.redirect('/login?error=1');
+    }
+  });
+
+  app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+  });
+}
+
+// force login when allowLogin is true
+app.use((req, res, next) => {
+  if (settings.allowLogin) {
+    if (!req.session.loggedIn) {
+      // user not logged in
+      res.redirect('/login?nextUrl=' + encodeURIComponent(req.originalUrl));
+    } else {
+      // check if session is still valid
+      if (req.session.cookie.expires < Date.now()) {
+        // session expired
+        res.redirect('/login?nextUrl=' + encodeURIComponent(req.originalUrl));
+      // add elseifs for more checks here
+      } else {
+        next();
+      }
+    }
+  } else {
+    next();
+  }
 });
+
+
+// handle page not found error
+app.use((req, res, next) => {
+  res.redirect('/error?code=404&page=' + encodeURIComponent(req.originalUrl));
+  return;
+});
+
 
 
 app.listen(settings.portNumber, () => {

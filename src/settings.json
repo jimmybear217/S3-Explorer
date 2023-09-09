@@ -4,6 +4,27 @@
     "allowLogin": true,
     "saveUserConfig": {
         "method": "file",
-        "path": "data/users.json"
+        "path": "data/users.json",
+        "saltRounds": 10
+    },
+    "errors": {
+        "404": {
+            "text": "404 - Page not found",
+            "goBackButton": true,
+            "goBackButtonUrl": "/",
+            "goBackButtonText": "Home"
+        },
+        "500": {
+            "text": "Internal Server Error",
+            "goBackButton": true,
+            "goBackButtonUrl": "/",
+            "goBackButtonText": "Home"
+        },
+        "501": {
+            "text": "An unknown error occured",
+            "goBackButton": true,
+            "goBackButtonUrl": "/",
+            "goBackButtonText": "Home"
+        }
     }
 }
