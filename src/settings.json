@@ -1,0 +1,9 @@
+{
+    "liveMode": false,
+    "portNumber": 3000,
+    "allowLogin": true,
+    "saveUserConfig": {
+        "method": "file",
+        "path": "data/users.json"
+    }
+}

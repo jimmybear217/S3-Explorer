@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Explorer - Configuration</title>
+</head>
+<body>
+    <h1>Configuration</h1>
+    <fieldset>
+        <legend>AWS Configuration</legend>
+        <form method="post">
+            <table>
+                <tr><th><label for="sessionName">sessionName</label></th><td><input type="text" value="<%= session.aws.sessionName %>" name="sessionName" /></td></tr>
+                <tr><th><label for="bucket">bucket</label></th><td><input type="text" value="<%= session.aws.bucket %>" name="inputBucket" /></td></tr>
+                <tr><th><label for="region">region</label></th><td><input type="text" value="<%= session.aws.region %>" name="inputRegion" /></td></tr>
+                <tr><th><label for="accessKeyId">accessKeyId</label></th><td><input type="text" value="<%= session.aws.accessKeyId %>" name="inputAccessKeyId" /></td></tr>
+                <tr><th><label for="secretAccessKey">secretAccessKey</label></th><td><input type="text" value="<%= session.aws.secretAccessKey %>" name="inputSecretAccessKey" /></td></tr>
+            </table>
+            <input type="submit" value="Save" />
+        </form>
+        <a href="/"><button>Back</button></a>
+    </fieldset>
+</body>
+</html>
