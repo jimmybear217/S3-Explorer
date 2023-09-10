@@ -1,15 +1,95 @@
+const settings = require('./settings.json');
+var newSettings = settings;
+var doRestart = false;
+const randomKey = require('./cryptotools.js').randomKey;
+const fs = require('fs');
+
+// init and validate settings
+if (!settings.liveMode) {
+  console.log("Running in debug mode");
+} else {
+  console.log("Running in production mode");
+}
+if (!settings.portNumber) {
+  newSettings.portNumber = 3000;
+  doRestart = true;
+  console.log("No port number specified in settings.json");
+}
+if (!settings.allowLogin) {
+  console.log("Login is disabled in settings.json");
+  if (!settings.awsConfig) {
+    console.warn("[WARN] No AWS config specified in settings.json while running in noLogin mode");
+  }
+} else {
+  if (!settings.saveUserConfig) {
+    newSettings.allowLogin = true;
+    newSettings.saveUserConfig = {
+      "saveUserConfig": {
+        "method": "file",
+        "path": "data/users.json",
+        "saltRounds": 10
+    }};
+    doRestart = true;
+    console.log("No user config specified in settings.json");
+  }
+}
+if (!settings.secureKey) {
+  console.log("No secure key specified in settings.json");
+  newSettings.secureKey = randomKey();
+  console.log("Generated secure key");
+  doRestart = true;
+}
+if (!settings.errors || !settings.errors[404] || !settings.errors[500] || !settings.errors[501]) {
+  newSettings.errors = {
+        "404": {
+            "text": "404 - Page not found",
+            "goBackButton": true,
+            "goBackButtonUrl": "/",
+            "goBackButtonText": "Home"
+        },
+        "500": {
+            "text": "Internal Server Error",
+            "goBackButton": true,
+            "goBackButtonUrl": "/",
+            "goBackButtonText": "Home"
+        },
+        "501": {
+            "text": "An unknown error occured",
+            "goBackButton": true,
+            "goBackButtonUrl": "/",
+            "goBackButtonText": "Home"
+        }
+  };
+  doRestart = true;
+  console.log("Error messages missing from settings.json");
+}
+if (newSettings != settings || doRestart) {
+  fs.writeFileSync(__dirname + '/settings.json', JSON.stringify(newSettings, null, 4));
+  console.log("Settings updated");
+  if (doRestart) {
+    console.log("Please restart to apply changes");
+    process.exit(0);
+  }
+} else {
+  console.log("Settings validated successfully");
+}
+// clear up variables
+delete newSettings, doRestart;
+
+// import webserver modules
 const express = require('express');
 const session = require('express-session');
-const S3 = require('./s3Interface.js');
-const randomKey = require('./cryptotools.js').randomKey;
-const path = require('path');
 const ejs = require('ejs');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const settings = require('./settings.json');
+const cookieParser = require('cookie-parser');
+const path = require('path');
+
+// import custom modules
 const loginHandler = require('./loginHandler.js');
-const { encode } = require('punycode');
-const { exit } = require('process');
+const S3 = require('./s3Interface.js');
+
+
+
 
 // init express
 const app = express();
@@ -17,7 +97,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(session({
-    secret: randomKey(),
+    secret: ( (settings.sessionKey) ? settings.sessionKey : randomKey()),
     resave: true,
     saveUninitialized: true,
     cookie: {
@@ -38,6 +118,31 @@ function renderPage(file, data, res) {
 }
 
 // setup express server pages
+app.use((req, res, next) => {
+  // set default session values
+  if (!req.session.loggedIn) {
+    req.session.loggedIn = false;
+    req.session.username = '';
+  }
+  if (!req.session.aws) {
+    req.session.aws = {
+      bucket: '',
+      region: 'us-west-1',
+      accessKeyId: '',
+      secretAccessKey: ''
+    };
+  }
+  req.session.save();
+  // log request
+  if (!settings.liveMode)
+    console.log(req.method + " " + req.url + " from " + req.ip + " (" + req.headers['user-agent'] + ")");
+  next();
+});
+
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pages/favicon.ico'));
+});
+
 app.get('/', (req, res) => {
   renderPage('index.ejs', { session: req.session, showLogin: settings.allowLogin }, res);
 });
@@ -76,6 +181,7 @@ app.get('/config', (req, res) => {
 
 app.post('/config', (req, res) => {
   req.session.aws = {
+    sessionName: (!req.body.sessionName) ? "" : req.body.sessionName,
     bucket: (!req.body.inputBucket) ? "" : req.body.inputBucket,
     region: (!req.body.inputRegion) ? "" : req.body.inputRegion,
     accessKeyId: (!req.body.inputAccessKeyId) ? "" : req.body.inputAccessKeyId,
@@ -147,7 +253,13 @@ if (settings.allowLogin) {
       if (!req.session.loggedIn || req.session.cookie.expires < Date.now()) {
         // user not logged in
         console.log("User not logged in");
-        res.redirect('/login' + (req.query.nextUrl) ? 'nextUrl=' + req.query.nextUrl : '?nextUrl=' + encodeURIComponent(req.originalUrl));
+        req.session.destroy();
+        var nextUrl = (req.originalUrl) ? encodeURIComponent(req.originalUrl) : "";
+        nextUrl = (req.url) ? encodeURIComponent(req.url) : nextUrl;
+        nextUrl = (req.query.nextUrl) ? encodeURIComponent(req.query.nextUrl) : nextUrl;
+        var redirectUrl = '/login' + ((req.query.nextUrl) ? '?nextUrl=' + nextUrl : '');
+        res.redirect(redirectUrl);
+        console.log("Redirecting to " + redirectUrl)
         return;
       } else {
         next();

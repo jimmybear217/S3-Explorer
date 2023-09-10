@@ -71,7 +71,25 @@ class loginHandler {
     getUserData(username, field) {
         this.readUserConfig();
         if (!this.userConfig[username]) return false; // user does not exist
+        if (!this.userConfig[username][field]) return false; // field does not exist
         return this.userConfig[username][field];
+    }
+
+    // secure properties
+    getSecureProperties(username, field) {
+        this.readUserConfig();
+        if (!this.userConfig[username]) return false; // user does not exist
+        if (!this.userConfig[username][field]) return false; // field does not exist
+        return decryptString(this.userConfig[username][field], this.settings.secureKey + username);
+    }
+
+    // set secure properties
+    setSecureProperties(username, field, value) {
+        this.readUserConfig();
+        if (!this.userConfig[username]) return false; // user does not exist
+        this.userConfig[username][field] = encryptString(value, this.settings.secureKey + username);
+        this.writeUserConfig();
+        return true;
     }
 }
 

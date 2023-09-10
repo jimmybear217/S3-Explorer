@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Explorer - Configurations</title>
+</head>
+<body>
+    <header>
+        <a href="/"><button>Back</button></a>
+        <h1>Configuration Lists</h1>
+    </header>
+    <fieldset>
+        <legend>Save Current Configuration</legend>
+        <a href="/config/save"><button>Save</button></a>
+        <a href="/config"><button>Edit</button></a>
+        <table>
+            <tr><th><label for="sessionName">sessionName</label></th><td><input readonly type="text" value="<%= session.aws.sessionName %>" name="sessionName" /></td></tr>
+            <tr><th><label for="bucket">bucket</label></th><td><input readonly type="text" value="<%= session.aws.bucket %>" name="inputBucket" /></td></tr>
+            <tr><th><label for="region">region</label></th><td><input readonly type="text" value="<%= session.aws.region %>" name="inputRegion" /></td></tr>
+            <tr><th><label for="accessKeyId">accessKeyId</label></th><td><input readonly type="text" value="<%= session.aws.accessKeyId %>" name="inputAccessKeyId" /></td></tr>
+            <tr><th><label for="secretAccessKey">secretAccessKey</label></th><td><input readonly type="text" value="<%= session.aws.secretAccessKey %>" name="inputSecretAccessKey" /></td></tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>Saved Configurations</legend>
+        <table>
+            <tr>
+                <th>sessionName</th>
+                <th>bucket</th>
+                <th>region</th>
+                <th>accessKeyId</th>
+                <th>secretAccessKey</th>
+            </tr>
+            <% if (configList) { %>
+                <% for (var i = 0; i < configList.length; i++) { %>
+                <tr>
+                    <td><input type="text" readonly value="<%= configList[i].sessionName %>" /></td>
+                    <td><input type="text" readonly value="<%= configList[i].bucket %>" /></td>
+                    <td><input type="text" readonly value="<%= configList[i].region %>" /></td>
+                    <td><input type="text" readonly value="<%= configList[i].accessKeyId %>" /></td>
+                    <td><input type="text" readonly value="<%= configList[i].secretAccessKey %>" /></td>
+                </tr>  
+              <% } %>
+            <% } %>
+        </table>
+    </fieldset>
+</body>
+</html>

@@ -6,7 +6,10 @@
     <title>S3 Explorer - Configuration</title>
 </head>
 <body>
-    <h1>Configuration</h1>
+    <header>
+        <a href="/"><button>Back</button></a>
+        <h1>Configuration</h1>
+    </header>
     <fieldset>
         <legend>AWS Configuration</legend>
         <form method="post">
@@ -17,9 +20,8 @@
                 <tr><th><label for="accessKeyId">accessKeyId</label></th><td><input type="text" value="<%= session.aws.accessKeyId %>" name="inputAccessKeyId" /></td></tr>
                 <tr><th><label for="secretAccessKey">secretAccessKey</label></th><td><input type="text" value="<%= session.aws.secretAccessKey %>" name="inputSecretAccessKey" /></td></tr>
             </table>
-            <input type="submit" value="Save" />
+            <input type="submit" value="Apply" />
         </form>
-        <a href="/"><button>Back</button></a>
     </fieldset>
 </body>
 </html>
