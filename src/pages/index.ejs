@@ -8,8 +8,7 @@
 <body>
     <h1>Hello, <% if (session.username) { %><%= session.username %><%} else { %>World <% } %>!</h1>
     <ul>
-        <li><a href="/config">Set Configuration</a></li>
-        <li><a href="/config/list">Saved Configurations</a></li>
+        <li><a href="/config/list">Configurations</a></li>
         <li><a href="/s3/list">List Buckets</a></li>
         <% if (showLogin) { %>
             <% if (session.loggedIn) { %>

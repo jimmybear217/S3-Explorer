@@ -11,35 +11,33 @@
         <h1>Configuration Lists</h1>
     </header>
     <fieldset>
-        <legend>Save Current Configuration</legend>
+        <legend>Current Configuration</legend>
         <a href="/config/save"><button>Save</button></a>
         <a href="/config"><button>Edit</button></a>
         <table>
-            <tr><th><label for="sessionName">sessionName</label></th><td><input readonly type="text" value="<%= session.aws.sessionName %>" name="sessionName" /></td></tr>
-            <tr><th><label for="bucket">bucket</label></th><td><input readonly type="text" value="<%= session.aws.bucket %>" name="inputBucket" /></td></tr>
-            <tr><th><label for="region">region</label></th><td><input readonly type="text" value="<%= session.aws.region %>" name="inputRegion" /></td></tr>
-            <tr><th><label for="accessKeyId">accessKeyId</label></th><td><input readonly type="text" value="<%= session.aws.accessKeyId %>" name="inputAccessKeyId" /></td></tr>
-            <tr><th><label for="secretAccessKey">secretAccessKey</label></th><td><input readonly type="text" value="<%= session.aws.secretAccessKey %>" name="inputSecretAccessKey" /></td></tr>
+            <tr><th><label for="sessionName">sessionName</label></th><td><input readonly disabled type="text" value="<%= session.aws.sessionName %>" name="sessionName" /></td></tr>
+            <tr><th><label for="bucket">bucket</label></th><td><input readonly disabled type="text" value="<%= session.aws.bucket %>" name="inputBucket" /></td></tr>
+            <tr><th><label for="region">region</label></th><td><input readonly disabled type="text" value="<%= session.aws.region %>" name="inputRegion" /></td></tr>
+            <tr><th><label for="accessKeyId">accessKeyId</label></th><td><input readonly disabled type="text" value="<%= session.aws.accessKeyId %>" name="inputAccessKeyId" /></td></tr>
+            <tr><th><label for="secretAccessKey">secretAccessKey</label></th><td><input readonly disabled type="text" value="<%= session.aws.secretAccessKey %>" name="inputSecretAccessKey" /></td></tr>
         </table>
     </fieldset>
     <fieldset>
         <legend>Saved Configurations</legend>
         <table>
-            <tr>
+            <!-- <tr>
                 <th>sessionName</th>
                 <th>bucket</th>
                 <th>region</th>
                 <th>accessKeyId</th>
                 <th>secretAccessKey</th>
-            </tr>
+            </tr> -->
             <% if (configList) { %>
                 <% for (var i = 0; i < configList.length; i++) { %>
                 <tr>
-                    <td><input type="text" readonly value="<%= configList[i].sessionName %>" /></td>
-                    <td><input type="text" readonly value="<%= configList[i].bucket %>" /></td>
-                    <td><input type="text" readonly value="<%= configList[i].region %>" /></td>
-                    <td><input type="text" readonly value="<%= configList[i].accessKeyId %>" /></td>
-                    <td><input type="text" readonly value="<%= configList[i].secretAccessKey %>" /></td>
+                    <td><input type="text" readonly disabled value="<%= configList[i] %>" /></td>
+                    <td><a href="/config/load?config=<%= configList[i] %>"><button>Load</button></a></td>
+                    <td><a href="/config/delete?config=<%= configList[i] %>"><button>Delete</button></a></td>
                 </tr>  
               <% } %>
             <% } %>

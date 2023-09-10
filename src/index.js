@@ -86,6 +86,7 @@ const path = require('path');
 
 // import custom modules
 const loginHandler = require('./loginHandler.js');
+const lh = new loginHandler();
 const S3 = require('./s3Interface.js');
 
 
@@ -97,7 +98,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(session({
-    secret: ( (settings.sessionKey) ? settings.sessionKey : randomKey()),
+    secret: randomKey(),
     resave: true,
     saveUninitialized: true,
     cookie: {
@@ -188,7 +189,7 @@ app.post('/config', (req, res) => {
     secretAccessKey: (!req.body.inputSecretAccessKey) ? "" : req.body.inputSecretAccessKey,
   };
   req.session.save();
-  res.redirect('/config');
+  res.redirect('/config/list');
 });
 
 
@@ -202,7 +203,7 @@ if (settings.allowLogin) {
   });
 
   app.post('/login', (req, res) => {
-    var lh = new loginHandler();
+    
     // check if username and password are set
     if (!req.body.inputUsername || !req.body.inputPassword) {
       res.redirect('/login?error=1');
@@ -226,7 +227,7 @@ if (settings.allowLogin) {
   });
 
   app.post('/register', (req, res) => {
-    var lh = new loginHandler();
+    
     if (!req.body.inputUsername || !req.body.inputPassword || !req.body.inputEmail) {
       res.redirect('/login?error=1');
       return;
@@ -271,12 +272,36 @@ if (settings.allowLogin) {
 // pages that require login
 // ----------------------
 
-// list configurations
+// AWS Configuration List for user
+
 app.get('/config/list', (req, res) => {
-  var lh = new loginHandler();
-  var configList = lh.getUserData(req.session.username, 'configList');
+  var configList = lh.listUserConfigList(req.session.username);
+  if (!configList) configList = {};
   renderPage('configList.ejs', { session: req.session, configList: configList }, res);
 });
+
+app.get('/config/save', (req, res) => {
+  if (req.session.aws)
+    lh.setUserConfigList(req.session.username, req.session.aws.sessionName, req.session.aws);
+  res.redirect('/config/list');
+});
+
+app.get('/config/load', (req, res) => {
+  var config = lh.getUserConfigList(req.session.username, req.query.config);
+  if (config)
+    req.session.aws = config;
+  req.session.save();
+  res.redirect('/config/list');
+});
+
+app.get('/config/delete', (req, res) => {
+  var config = lh.deleteUserConfigList(req.session.username, req.query.config);
+  if (config)
+    req.session.aws = config;
+  req.session.save();
+  res.redirect('/config/list');
+});
+
 
 // handle page not found error
 app.use((req, res, next) => {
