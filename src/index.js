@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const settings = require('./settings.json');
 const loginHandler = require('./loginHandler.js');
 const { encode } = require('punycode');
+const { exit } = require('process');
 
 // init express
 const app = express();
@@ -25,9 +26,8 @@ app.use(session({
     }
 }));
 
-// setup express server pages
-app.get('/', (req, res) => {
-  ejs.renderFile(path.join(__dirname, 'pages/index.ejs'), { session: req.session, showLogin: settings.allowLogin }, {}, function(err, str){
+function renderPage(file, data, res) {
+  ejs.renderFile(path.join(__dirname, 'pages/' + file), data, {}, function(err, str){
     if (err) {
       console.log(err);
       res.redirect('/error?code=500');
@@ -35,6 +35,11 @@ app.get('/', (req, res) => {
       res.send(str);
     }
   });
+}
+
+// setup express server pages
+app.get('/', (req, res) => {
+  renderPage('index.ejs', { session: req.session, showLogin: settings.allowLogin }, res);
 });
 
 app.get('/error', (req, res) => {
@@ -52,6 +57,10 @@ app.get('/error', (req, res) => {
   });
 });
 
+// ----------------------
+// pages that don't require login
+// ----------------------
+
 app.get('/config', (req, res) => {
   if (!req.session.aws) {
     req.session.aws = {
@@ -62,14 +71,7 @@ app.get('/config', (req, res) => {
     };
     req.session.save();
   }
-  ejs.renderFile(path.join(__dirname, 'pages/config.ejs'), { session: req.session }, {}, function(err, str){
-    if (err) {
-      console.log(err);
-      res.redirect('/error?code=500');
-    } else {
-      res.send(str);
-    }
-  });
+  renderPage('config.ejs', { session: req.session }, res);
 });
 
 app.post('/config', (req, res) => {
@@ -83,24 +85,24 @@ app.post('/config', (req, res) => {
   res.redirect('/config');
 });
 
+
+// ----------------------
+// login pages
+// ----------------------
+
 if (settings.allowLogin) {
   app.get('/login', (req, res) => {
-    ejs.renderFile(path.join(__dirname, 'pages/login.ejs'), { session: req.session, error: (req.query.error == 1), registerSuccess: (req.query.success == 1) }, {}, function(err, str){
-      if (err) {
-        console.log(err);
-        res.redirect('/error?code=500');
-      } else {
-        res.send(str);
-      }
-    });
+    renderPage('login.ejs', { session: req.session, error: (req.query.error == 1), registerSuccess: (req.query.success == 1) }, res);
   });
 
   app.post('/login', (req, res) => {
     var lh = new loginHandler();
+    // check if username and password are set
     if (!req.body.inputUsername || !req.body.inputPassword) {
       res.redirect('/login?error=1');
       return;
     }
+    // check login credentials, set sesion and redirect
     req.body.inputUsername = encodeURIComponent(req.body.inputUsername); // prevent XSS
     if (lh.login(req.body.inputUsername, req.body.inputPassword)) {
       req.session.loggedIn = true;
@@ -112,7 +114,8 @@ if (settings.allowLogin) {
         res.redirect('/');
       }
     } else {
-      res.redirect('/login?nextUrl=' + (req.query.nextUrl) ? encodeURIComponent(req.query.nextUrl) : ""  + '&error=1');
+      req.session.destroy();
+      res.redirect('/login?error=1' + (req.query.nextUrl) ? "&nextUrl=" + encodeURIComponent(req.query.nextUrl) : "");
     }
   });
 
@@ -134,29 +137,34 @@ if (settings.allowLogin) {
     req.session.destroy();
     res.redirect('/');
   });
-}
 
-// force login when allowLogin is true
-app.use((req, res, next) => {
-  if (settings.allowLogin) {
-    if (!req.session.loggedIn) {
-      // user not logged in
-      res.redirect('/login?nextUrl=' + encodeURIComponent(req.originalUrl));
-    } else {
-      // check if session is still valid
-      if (req.session.cookie.expires < Date.now()) {
-        // session expired
-        res.redirect('/login?nextUrl=' + encodeURIComponent(req.originalUrl));
-      // add elseifs for more checks here
+  // force login when allowLogin is true
+  app.use((req, res, next) => {
+    /**
+     * 1. Check if user is logged in
+     * 2. Check if session is expired
+     */
+      if (!req.session.loggedIn || req.session.cookie.expires < Date.now()) {
+        // user not logged in
+        console.log("User not logged in");
+        res.redirect('/login' + (req.query.nextUrl) ? 'nextUrl=' + req.query.nextUrl : '?nextUrl=' + encodeURIComponent(req.originalUrl));
+        return;
       } else {
         next();
       }
-    }
-  } else {
-    next();
-  }
-});
+  });
+}
 
+// ----------------------
+// pages that require login
+// ----------------------
+
+// list configurations
+app.get('/config/list', (req, res) => {
+  var lh = new loginHandler();
+  var configList = lh.getUserData(req.session.username, 'configList');
+  renderPage('configList.ejs', { session: req.session, configList: configList }, res);
+});
 
 // handle page not found error
 app.use((req, res, next) => {

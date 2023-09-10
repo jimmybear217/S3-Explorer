@@ -51,11 +51,29 @@ class loginHandler {
         if (userConfig[username]) return false; // user already exists
         this.userConfig[username] = {
             password: bcrypt.hashSync(password, this.settings.saltRounds),
-            email: email
+            email: email,
+            configList: []
         };
         this.writeUserConfig();
         return this.login(username, password);
     }
+
+    // update user data
+    updateUserData(username, field, value) {
+        this.readUserConfig();
+        if (!this.userConfig[username]) return false; // user does not exist
+        this.userConfig[username][field] = value;
+        this.writeUserConfig();
+        return true;
+    }
+
+    // get user data
+    getUserData(username, field) {
+        this.readUserConfig();
+        if (!this.userConfig[username]) return false; // user does not exist
+        return this.userConfig[username][field];
+    }
 }
+
 
 module.exports = loginHandler;
