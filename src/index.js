@@ -273,6 +273,7 @@ if (settings.allowLogin) {
 // ----------------------
 
 // AWS Configuration List for user
+// TODO: Encrypt the secret key
 
 app.get('/config/list', (req, res) => {
   var configList = lh.listUserConfigList(req.session.username);
