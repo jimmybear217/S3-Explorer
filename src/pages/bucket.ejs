@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Explorer - Bucket</title>
+</head>
+<body>
+    <header>
+        <a href="/"><button>Home</button></a>
+        <h1>S3 Explorer - Bucket</h1>
+    </header>
+    <% if (buckets) { %>
+        <ul>
+            <% buckets.forEach(bucket => { %>
+                <% if (bucket.cacheReady) { %>
+                    <li>
+                        <a href="/bucket/<%= bucket.Name %>"><%= bucket.Name %> (list)</a>
+                        <a href="/explore/<%= bucket.Name %>">(explorer)</a>
+                    </li>
+                <% } else { %>
+                    <li><a href="/bucket/cache/<%= bucket.Name %>"><%= bucket.Name %></a> (to be cached)</li>
+                <% } %>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>No buckets found</p>
+    <% } %>
+</body>
+</html>

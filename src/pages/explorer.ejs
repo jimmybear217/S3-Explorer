@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/explorer.css">
+    <title>S3 Explorer</title>
+</head>
+<body>
+    <header>
+        <a href="/"><button>Home</button></a>
+        <h1>S3 Explorer</h1>
+    </header>
+    <fieldset>
+        <legend>Bucket</legend>
+        <h2 id="title"></h2>
+        <p>Path: <span id="path"></span></p>
+    </fieldset>
+    <fieldset>
+        <legend>Files</legend>
+        <ul id="files"></ul>
+    </fieldset>
+    <script>
+        const bucketName = window.location.pathname.split('/')[2];
+        document.getElementById('title').innerText = bucketName;
+        let path = document.getElementById('path').innerText;
+        document.getElementById('path').addEventListener("click", () => {
+            path = prompt('Enter path', path);
+            document.getElementById('path').innerText = path;
+            getFiles(path);
+        })
+
+        function getFiles(path="") {
+            // process
+            while (path.includes("//")) path = path.replace("//", "/");
+            if (path == "/") path = "";
+            // remove existing files
+            document.getElementById('files').innerHTML = '<li>loading...</li>';
+            // update path
+            document.getElementById('path').innerText = path;
+            // fetch new files
+            fetch('/api/bucket/'+bucketName+"?folder="+path).then((data) =>{
+                // add new files
+                data.json().then((jsonData) => {
+                    console.log(jsonData);
+                    if (path != "") document.getElementById('files').innerHTML = '<li class="fileTile folder" onClick="goUp()"><img src="folder" alt="folder">..</li>';
+                    else document.getElementById('files').innerHTML = "";
+                    jsonData.forEach((file) => {
+                        var li = document.createElement('li');
+                        li.className = "fileTile " + ((file.isFolder) ? "folder" : "file");
+                        var img = document.createElement('img');
+                        img.src = (file.isFolder) ? "folder" : "fileType";
+                        img.alt = (file.isFolder) ? "folder " : "fileType ";
+                        var text = document.createTextNode(file.file);
+                        li.appendChild(img);
+                        li.appendChild(text);
+                        document.getElementById('files').appendChild(li);
+                        if (file.isFolder) {
+                            li.addEventListener("click", () => {
+                                getFiles(path + file.file + "/")
+                            })
+                        }
+                        // else {
+                        //     li.addEventListener("click", () => {
+                        //         window.location.href = "/api/bucket/" + bucketName + "/" + path + file.file;
+                        //     })
+                        // }
+                        })
+                    })
+                })
+            }
+
+            function goUp() {
+                var newpath = document.getElementById('path').innerText.split('/');
+                if (newpath.length > 2) {
+                    delete newpath[newpath.length-2];
+                    newpath = newpath.join('/') + '/';
+                } else {
+                    newpath = "";
+                }
+                getFiles(newpath);
+            }
+
+            function getIconName(filename) {
+                var ext = filename.split('.').pop();
+                switch (ext) {
+                    case "jpg":
+                    case "jpeg":
+                    case "png":
+                    case "gif":
+                    case "svg":
+                        return "image";
+                    case "mp4":
+                    case "webm":
+                    case "ogg":
+                        return "video";
+                    case "mp3":
+                    case "wav":
+                    case "ogg":
+                        return "audio";
+                    case "pdf":
+                        return "pdf";
+                    case "doc":
+                    case "docx":
+                        return "word";
+                    case "xls":
+                    case "xlsx":
+                        return "excel";
+                    case "ppt":
+                    case "pptx":
+                        return "powerpoint";
+                    case "zip":
+                    case "rar":
+                    case "7z":
+                    case "tar":
+                    case "gz":
+                    case "bz2":
+                        return "archive";
+                    default:
+                        return "file";
+            }
+
+            document.onreadystatechange = () => {
+                if (document.readyState === 'complete') {
+                    getFiles();
+                }
+            };
+    </script>
+</body>
+</html>

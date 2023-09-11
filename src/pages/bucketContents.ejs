@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Explorer - Bucket - <%= bucketName %></title>
+</head>
+<body>
+    <header>
+        <a href="/"><button>Home</button></a>
+        <h1>S3 Explorer - Bucket: <%= bucketName %></h1>
+    </header>
+    <% if (bucketData.currentLevelObjects) { %>
+        <ul>
+            <% bucketData.currentLevelObjects.forEach(line => { %>
+                <li><a href="/bucket/<%= bucketName %>/?folder=<%= line.path %>"><%= line.file %></a></li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>No data found</p>
+    <% } %>
+</body>
+</html>

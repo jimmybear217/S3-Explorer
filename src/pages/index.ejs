@@ -9,7 +9,9 @@
     <h1>Hello, <% if (session.username) { %><%= session.username %><%} else { %>World <% } %>!</h1>
     <ul>
         <li><a href="/config/list">Configurations</a></li>
-        <li><a href="/s3/list">List Buckets</a></li>
+        <% if (session.aws.bucket) { %>
+            <li><a href="/bucket">Access Bucket</a></li>
+        <% } %>
         <% if (showLogin) { %>
             <% if (session.loggedIn) { %>
                 <li><a href="/logout">Logout</a></li>

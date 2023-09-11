@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Explorer - Waiting for bucket</title>
+</head>
+<body>
+    <header>
+        <a href="/"><button>Home</button></a>
+        <h1>S3 Explorer - Waiting for bucket</h1>
+    </header>
+    <p id="status">Waiting for bucket to be cached...</p>
+    <script>
+        setInterval(() => {
+            fetch('/bucket/isCacheReady/<%= bucketName %>').then((data) => {
+                data.text().then((text) => {
+                    if (text === 'true') {
+                        document.getElementById("status").innerText = 'Bucket cached, redirecting...'
+                        window.location.href = '/bucket/<%= bucketName %>'
+                    }
+                })
+            })
+        }, 2000);
+    </script>
+</body>
+</html>

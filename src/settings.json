@@ -27,5 +27,9 @@
             "goBackButtonText": "Home"
         }
     },
-    "secureKey": "dbftsuOADF5DAqwMGgxX1vIea0MdhDvT"
+    "secureKey": "dbftsuOADF5DAqwMGgxX1vIea0MdhDvT",
+    "bucketCache": {
+        "private": true,
+        "folder": "data/bucketCache"
+    }
 }
