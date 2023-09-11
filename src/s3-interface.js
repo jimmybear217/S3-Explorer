@@ -133,7 +133,8 @@ class s3Interface {
 			}
 			return false;
 		});
-		console.log("Completed loading bucket", bucketName, "for user", username, "using cached bucket list. Found", outputData.length, "objects in folder '", folder, "' out of a total of", data.length, "objects in bucket");
+		console.log("Completed loading bucket", bucketName, "for user", username, "using cached bucket list");
+		// console.log("Completed loading bucket", bucketName, "for user", username, "using cached bucket list. Found", outputData.length, "objects in folder '", folder, "' out of a total of", data.length, "objects in bucket");
 		// return { "allObjects": data, "currentLevelObjects": outputData };
 		return outputData;
 	}
