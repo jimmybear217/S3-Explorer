@@ -43,17 +43,21 @@
                 // add new files
                 data.json().then((jsonData) => {
                     console.log(jsonData);
-                    if (path != "") document.getElementById('files').innerHTML = '<li class="fileTile folder" onClick="goUp()"><img src="folder" alt="folder">..</li>';
+                    if (path != "") document.getElementById('files').innerHTML = '<li class="fileTile folder" onClick="goUp()"><p><img src="/icon/folder" alt="folder "></p><p>..</p></li>';
                     else document.getElementById('files').innerHTML = "";
                     jsonData.forEach((file) => {
                         var li = document.createElement('li');
                         li.className = "fileTile " + ((file.isFolder) ? "folder" : "file");
+                        var p1 = document.createElement('p');
                         var img = document.createElement('img');
-                        img.src = (file.isFolder) ? "folder" : "fileType";
-                        img.alt = (file.isFolder) ? "folder " : "fileType ";
+                        img.src = "/icon/" + ((file.isFolder) ? "folder" : getIconName(file.file))
+                        img.alt = ((file.isFolder) ? "folder" : getIconName(file.file)) + " icon ";
+                        var p2 = document.createElement('p');
                         var text = document.createTextNode(file.file);
-                        li.appendChild(img);
-                        li.appendChild(text);
+                        p1.appendChild(img);
+                        li.appendChild(p1);
+                        p2.appendChild(text);
+                        li.appendChild(p2);
                         document.getElementById('files').appendChild(li);
                         if (file.isFolder) {
                             li.addEventListener("click", () => {
@@ -93,6 +97,7 @@
                     case "mp4":
                     case "webm":
                     case "ogg":
+                    case "mkv":
                         return "video";
                     case "mp3":
                     case "wav":
@@ -116,8 +121,11 @@
                     case "gz":
                     case "bz2":
                         return "archive";
-                    default:
+                    case "txt":
                         return "file";
+                    default:
+                        return "unknown";
+                }
             }
 
             document.onreadystatechange = () => {

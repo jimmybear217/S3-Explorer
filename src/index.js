@@ -161,6 +161,46 @@ app.get('/explorer.css', (req, res) => {
 	res.sendFile(path.join(__dirname, 'assets/explorer.css'));
 });
 
+app.get('/icon/:mime', (req, res) => {
+	var mime = req.params.mime;
+	switch (mime) {
+		case "folder":
+			res.sendFile(__dirname + "/assets/icons/folder-cyan.svg");
+			break;
+		case "image":
+			res.sendFile(__dirname + "/assets/icons/image-x-generic.svg");
+			break;
+		case "video":
+			res.sendFile(__dirname + "/assets/icons/video-x-generic.svg");
+			break;
+		case "audio":
+			res.sendFile(__dirname + "/assets/icons/audio-x-generic.svg");
+			break;
+		case "pdf":
+			res.sendFile(__dirname + "/assets/icons/application-pdf.svg");
+			break;
+		case "word":
+			res.sendFile(__dirname + "/assets/icons/ms-word.svg");
+			break;
+		case "excel":
+			res.sendFile(__dirname + "/assets/icons/ms-excel.svg");
+			break;
+		case "powerpoint":
+			res.sendFile(__dirname + "/assets/icons/ms-powerpoint.svg");
+			break;
+		case "archive":
+			res.sendFile(__dirname + "/assets/icons/archive.png");
+			break;
+		case "file":
+			res.sendFile(__dirname + "/assets/icons/text-x-generic.svg");
+			break;
+		default:
+		case "unknown":
+			res.sendFile(__dirname + "/assets/icons/unknown.svg");
+			break;
+	}
+});
+
 app.get('/', (req, res) => {
 	renderPage('index.ejs', { session: req.session, showLogin: settings.allowLogin }, res);
 });
