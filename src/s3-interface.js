@@ -1,4 +1,5 @@
-const { S3Client, ListObjectsV2Command, ListBucketsCommand } = require("@aws-sdk/client-s3");
+const { S3Client, ListObjectsV2Command, ListBucketsCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const {getSignedUrl} = require("@aws-sdk/s3-request-presigner");
 const settings = require('./settings.json');
 const fs = require('fs');
 
@@ -146,6 +147,11 @@ class s3Interface {
 		// console.log("Completed loading bucket", bucketName, "for user", username, "using cached bucket list. Found", outputData.length, "objects in folder '", folder, "' out of a total of", data.length, "objects in bucket");
 		// return { "allObjects": data, "currentLevelObjects": outputData };
 		return outputData;
+	}
+
+	getFileUrl = async (bucketName, fileName) => {
+		const command = new GetObjectCommand({Bucket: bucketName, Key: fileName});
+		return getSignedUrl(this.s3client, command, {expiresIn: 3600});
 	}
 }
 

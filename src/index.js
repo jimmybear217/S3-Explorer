@@ -430,10 +430,10 @@ app.get('/bucket/:bucket', (req, res) => {
 	});
 });
 
-app.get('/bucket/:bucket/', (req, res) => {
+app.get('/api/bucket/:bucket/:object', (req, res) => {
 	var s3 = new S3(req.session.aws);
-	s3.listObjectsInFolder(req.params.bucket, req.session.username, req.query.folder).then((data) => {
-		renderPage('bucketContents.ejs', { session: req.session, bucketName: req.params.bucket, bucketData: data }, res);
+	s3.getFileUrl(req.params.bucket, decodeURIComponent(req.params.object)).then((url) => {
+		res.redirect(url);
 	}).catch((err) => {
 		console.error(err);
 		res.redirect('/error?code=500');

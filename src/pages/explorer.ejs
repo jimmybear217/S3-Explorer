@@ -64,11 +64,11 @@
                                 getFiles(path + file.file + "/")
                             })
                         }
-                        // else {
-                        //     li.addEventListener("click", () => {
-                        //         window.location.href = "/api/bucket/" + bucketName + "/" + path + file.file;
-                        //     })
-                        // }
+                        else {
+                            li.addEventListener("click", () => {
+                                window.open("/api/bucket/"+bucketName+"/"+encodeURIComponent(file.path), "_blank")
+                            })
+                        }
                         })
                     })
                 })
