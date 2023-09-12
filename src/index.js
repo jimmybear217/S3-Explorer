@@ -140,8 +140,7 @@ app.use((req, res, next) => {
 	}
 	if (!req.session.aws) {
 		req.session.aws = {
-			bucket: '',
-			region: 'us-west-1',
+			region: 'us-west-2',
 			accessKeyId: '',
 			secretAccessKey: ''
 		};
@@ -230,8 +229,7 @@ app.get('/error', (req, res) => {
 app.get('/config', (req, res) => {
 	if (!req.session.aws) {
 		req.session.aws = {
-			bucket: '',
-			region: 'us-west-1',
+			region: 'us-west-2',
 			accessKeyId: '',
 			secretAccessKey: ''
 		};
@@ -243,7 +241,6 @@ app.get('/config', (req, res) => {
 app.post('/config', (req, res) => {
 	req.session.aws = {
 		sessionName: (!req.body.sessionName) ? "" : req.body.sessionName,
-		bucket: (!req.body.inputBucket) ? "" : req.body.inputBucket,
 		region: (!req.body.inputRegion) ? "" : req.body.inputRegion,
 		accessKeyId: (!req.body.inputAccessKeyId) ? "" : req.body.inputAccessKeyId,
 		secretAccessKey: (!req.body.inputSecretAccessKey) ? "" : req.body.inputSecretAccessKey,

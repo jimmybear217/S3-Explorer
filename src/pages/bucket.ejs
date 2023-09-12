@@ -13,15 +13,17 @@
     <% if (buckets) { %>
         <ul>
             <% buckets.forEach(bucket => { %>
-                <% if (bucket.cacheReady) { %>
-                    <li>
-                        <%= bucket.Name %>
-                        <a href="/bucket/<%= bucket.Name %>"><button>list</button></a>
-                        <a href="/explore/<%= bucket.Name %>"><button>explorer</button></a>
-                        <li><a href="/bucket/cache/<%= bucket.Name %>"><button>Refresh Cache</button></li>
-                    </li>
-                <% } else { %>
-                    <li><a href="/bucket/cache/<%= bucket.Name %>"><button>Download Cache</button></a></li>
+                <% if (bucket.Name.length > 0) { %>
+                    <% if (bucket.cacheReady) { %>
+                        <li>
+                            <%= bucket.Name %>
+                            <a href="/bucket/<%= bucket.Name %>"><button>list</button></a>
+                            <a href="/explore/<%= bucket.Name %>"><button>explorer</button></a>
+                            <a href="/bucket/cache/<%= bucket.Name %>"><button>Refresh Cache</button>
+                    <% } else { %>
+                        <a href="/bucket/cache/<%= bucket.Name %>"><button>Download Cache</button></a>
+                    <% } %>
+                </li>
                 <% } %>
             <% }) %>
         </ul>
