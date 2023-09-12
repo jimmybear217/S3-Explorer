@@ -422,7 +422,7 @@ app.get('/explore/:bucket', (req, res) => {
 
 app.get('/bucket/:bucket', (req, res) => {
 	var s3 = new S3(req.session.aws);
-	s3.listObjectsInFolder(req.params.bucket, req.session.username, "").then((data) => {
+	s3.listObjects(req.params.bucket, req.session.username).then((data) => {
 		renderPage('bucketContents.ejs', { session: req.session, bucketName: req.params.bucket, bucketData: data }, res);
 	}).catch((err) => {
 		console.error(err);

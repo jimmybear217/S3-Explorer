@@ -10,10 +10,14 @@
         <a href="/"><button>Home</button></a>
         <h1>S3 Explorer - Bucket: <%= bucketName %></h1>
     </header>
-    <% if (bucketData.currentLevelObjects) { %>
+    <% if (bucketData) { %>
         <ul>
-            <% bucketData.currentLevelObjects.forEach(line => { %>
-                <li><a href="/bucket/<%= bucketName %>/?folder=<%= line.path %>"><%= line.file %></a></li>
+            <% bucketData.forEach(line => { %>
+                <script>
+                    var file = "<%= line %>"
+                    var bucketName = "<%= bucketName %>"
+                    document.write('<li><a target="_blank" href="/api/bucket/' + bucketName + '/' + encodeURIComponent(file) + '">' + file + '</a></li>');
+                </script>
             <% }) %>
         </ul>
     <% } else { %>

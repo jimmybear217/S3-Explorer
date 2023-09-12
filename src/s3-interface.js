@@ -103,8 +103,7 @@ class s3Interface {
 	listObjects = async (bucketName, username=false) => {
 		var cachePath = this.makeCacheFile(bucketName, username);
 		if (!fs.existsSync(cachePath)) {
-			console.log("Caching bucket", bucketName, "for user", username, "as no cache file exists");
-			cacheAllObjects(bucketName, username);
+			return [];
 		}
 		console.log("Loading bucket", bucketName, "for user", username, "using cached bucket list");
 		return fs.readFileSync(cachePath, 'utf8').split("\n");
