@@ -18,7 +18,7 @@ class s3Interface {
 			this.s3client = new S3Client({ region: config.region });
 		}
 	}
-	listBuckets = async () => {
+	listBuckets = async (username=false) => {
 		const command = new ListBucketsCommand({});
 		
 		try {

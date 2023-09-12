@@ -363,6 +363,7 @@ app.get('/bucket', (req, res) => {
 	s3.listBuckets().then((data) => {
 		data.map((bucket) => {
 			bucket.cacheReady = fs.existsSync(s3.makeCacheFile(bucket.Name, req.session.username));
+			bucket.size = (fs.existsSync(s3.makeCacheFile(bucket.Name, req.session.username) + ".count")) ? fs.readFileSync(s3.makeCacheFile(bucket.Name, req.session.username) + ".count") : "?";
 		});
 		renderPage('bucket.ejs', { session: req.session, buckets: data }, res);
 	}).catch((err) => {
