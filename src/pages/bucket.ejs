@@ -15,11 +15,13 @@
             <% buckets.forEach(bucket => { %>
                 <% if (bucket.cacheReady) { %>
                     <li>
-                        <a href="/bucket/<%= bucket.Name %>"><%= bucket.Name %> (list)</a>
-                        <a href="/explore/<%= bucket.Name %>">(explorer)</a>
+                        <%= bucket.Name %>
+                        <a href="/bucket/<%= bucket.Name %>"><button>list</button></a>
+                        <a href="/explore/<%= bucket.Name %>"><button>explorer</button></a>
+                        <li><a href="/bucket/cache/<%= bucket.Name %>"><button>Refresh Cache</button></li>
                     </li>
                 <% } else { %>
-                    <li><a href="/bucket/cache/<%= bucket.Name %>"><%= bucket.Name %></a> (to be cached)</li>
+                    <li><a href="/bucket/cache/<%= bucket.Name %>"><button>Download Cache</button></a></li>
                 <% } %>
             <% }) %>
         </ul>
