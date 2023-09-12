@@ -43,7 +43,7 @@
                 // add new files
                 data.json().then((jsonData) => {
                     console.log(jsonData);
-                    if (path != "") document.getElementById('files').innerHTML = '<li class="fileTile folder" onClick="goUp()"><p><img src="/icon/folder" alt="folder "></p><p>..</p></li>';
+                    if (path != "") document.getElementById('files').innerHTML = '<li class="fileTile folder" onClick="goUp()"><p><img src="/icon/folder-back" alt="folder "></p><p>..</p></li>';
                     else document.getElementById('files').innerHTML = "";
                     jsonData.forEach((file) => {
                         var li = document.createElement('li');
