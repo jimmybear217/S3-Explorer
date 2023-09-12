@@ -83,12 +83,12 @@ class s3Interface {
 				objectCount += Contents.length;										// count objects
 				const contentsList = Contents.map((c) => `${c.Key}`).join("\n");	// create list of objects for file
 				fs.appendFileSync(cachePathTmp, contentsList + "\n");				// append temporary file with list of objects
-				fs.writeFileSync(cachePathCount, str(objectCount));					// write count file
+				fs.writeFileSync(cachePathCount, objectCount.toString());			// write count file
 				isTruncated = IsTruncated;											// check if more objects to list
 				command.input.ContinuationToken = NextContinuationToken;			// set next token
 			}
 
-			fs.moveSync(cachePathTmp, cachePath, { overwrite: true });				// move temporary file to final file
+			fs.renameSync(cachePathTmp, cachePath, { overwrite: true });				// move temporary file to final file
 
 			console.log("Completed listing ", objectCount, " objects in bucket", bucketName," for user", username, "...\n")
 			return true;

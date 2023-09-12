@@ -11,7 +11,7 @@
         <h1>S3 Explorer - Waiting for bucket</h1>
     </header>
     <p id="status">Waiting for bucket to be cached...</p>
-    <p>Cached <span id="status-count">0</span> Objects so far.</p>
+    <p>Cached <span id="status-count">__</span> Objects so far.</p>
     <script>
         setInterval(() => {
             fetch('/bucket/isCacheReady/<%= bucketName %>').then((data) => {
@@ -20,11 +20,21 @@
                         document.getElementById("status").innerText = 'Bucket cached, redirecting...'
                         window.location.href = '/explore/<%= bucketName %>'
                     } else {
-                        document.getElementById("status").innerText = 'Waiting for bucket to be cached...'
+                        document.getElementById("status-count").setAttribute('x-actual-count', jsonData.objectCount);
                     }
                 })
             })
         }, 1000);
+        var numbersIncreaseInterval = setInterval(() => {
+            var statusCount = document.getElementById("status-count")
+            if (statusCount.innerText == '__') {
+                statusCount.innerText = 0
+            } else {
+                if (parseInt(statusCount.getAttribute('x-actual-count')) > statusCount.innerText) {
+                    statusCount.innerText = Math.ceil((parseInt(statusCount.getAttribute('x-actual-count')) - parseInt(statusCount.innerText)) / 4 + parseInt(statusCount.innerText))
+                }
+            }
+        }, 100);
     </script>
 </body>
 </html>

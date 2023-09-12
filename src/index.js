@@ -388,7 +388,13 @@ app.post('/bucket/reache/:bucket', (req, res) => {
 app.get('/bucket/cache/:bucket', (req, res) => {
 	var s3 = new S3(req.session.aws);
 	if (fs.existsSync(s3.makeCacheFile(req.params.bucket, req.session.username))) {
+		console.log("it looks like the bucket is already cached");
 		res.redirect('/bucket/recache/' + req.params.bucket);
+		return;
+	}
+	if (fs.existsSync(s3.makeCacheFile(req.params.bucket + ".tmp", req.session.username))) {
+		console.log("it looks like a cachine process is already running");
+		res.redirect('/bucket/waitFor/' + req.params.bucket);
 		return;
 	}
 	s3.cacheAllObjects(req.params.bucket, req.session.username).then((data) => {

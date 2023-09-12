@@ -15,9 +15,9 @@
         <ul>
             <% buckets.forEach(bucket => { %>
                 <% if (bucket.Name.length > 0) { %>
+                    <li>
+                        <%= bucket.Name %>
                     <% if (bucket.cacheReady) { %>
-                        <li>
-                            <%= bucket.Name %>
                             <a href="/bucket/<%= bucket.Name %>"><button>list</button></a>
                             <a href="/explore/<%= bucket.Name %>"><button>explorer</button></a>
                             <a href="/bucket/reache/<%= bucket.Name %>"><button>Refresh Cache</button>
