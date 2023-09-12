@@ -312,10 +312,10 @@ if (settings.allowLogin) {
 				// user not logged in
 				console.log("User not logged in");
 				req.session.destroy();
-				var nextUrl = (req.originalUrl) ? encodeURIComponent(req.originalUrl) : "";
-				nextUrl = (req.url) ? encodeURIComponent(req.url) : nextUrl;
-				nextUrl = (req.query.nextUrl) ? encodeURIComponent(req.query.nextUrl) : nextUrl;
-				var redirectUrl = '/login' + ((req.query.nextUrl) ? '?nextUrl=' + nextUrl : '');
+				var nextUrl = (req.originalUrl) ? encodeURIComponent(req.originalUrl) : "";			// set nextUrl to original url
+				nextUrl = (nextUrl == "" && req.url) ? encodeURIComponent(req.url) : nextUrl;		// set nextUrl to current url if original url is not set
+				nextUrl = (req.query.nextUrl) ? encodeURIComponent(req.query.nextUrl) : nextUrl;	// set nextUrl to nextUrl query parameter if set
+				var redirectUrl = '/login' + ((nextUrl != "") ? '?nextUrl=' + nextUrl : '');
 				res.redirect(redirectUrl);
 				console.log("Redirecting to " + redirectUrl)
 				return;
