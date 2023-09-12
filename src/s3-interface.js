@@ -58,7 +58,7 @@ class s3Interface {
 	cacheAllObjects = async (bucketName, username=false) => {
 		const command = new ListObjectsV2Command({
 			Bucket: bucketName,
-			MaxKeys: 50,
+			MaxKeys: 100,
 			// Delimiter: "/",
 			// Prefix: directoryName
 		});
@@ -66,22 +66,31 @@ class s3Interface {
 		try {
 			let isTruncated = true;
 		
-			console.log("Your bucket contains the following objects:\n")
-			let contents = "";
+			console.log("Listing all objects in bucket", bucketName," for user", username, "...\n")
+			let objectCount = 0;
+
+			// set file paths
+			var cachePath = this.makeCacheFile(bucketName, username)
+			var cachePathTmp = cachePath + ".tmp";
+			var cachePathCount = cachePath + ".count";
+
+			// write new empty files
+			fs.writeFileSync(cachePathTmp, "");
+			fs.writeFileSync(cachePathCount, "0");
 		
 			while (isTruncated) {
-			const { Contents, IsTruncated, NextContinuationToken } = await this.s3client.send(command);
-			const contentsList = Contents.map((c) => `${c.Key}`).join("\n");
-			contents += contentsList + "\n";
-			isTruncated = IsTruncated;
-			command.input.ContinuationToken = NextContinuationToken;
+				const { Contents, IsTruncated, NextContinuationToken } = await this.s3client.send(command);
+				objectCount += Contents.length;										// count objects
+				const contentsList = Contents.map((c) => `${c.Key}`).join("\n");	// create list of objects for file
+				fs.appendFileSync(cachePathTmp, contentsList + "\n");				// append temporary file with list of objects
+				fs.writeFileSync(cachePathCount, str(objectCount));					// write count file
+				isTruncated = IsTruncated;											// check if more objects to list
+				command.input.ContinuationToken = NextContinuationToken;			// set next token
 			}
-			// console.log(contents);
-			
-			var cachePath = this.makeCacheFile(bucketName, username)
-			
-			// write file
-			fs.writeFileSync(cachePath, contents);
+
+			fs.moveSync(cachePathTmp, cachePath, { overwrite: true });				// move temporary file to final file
+
+			console.log("Completed listing ", objectCount, " objects in bucket", bucketName," for user", username, "...\n")
 			return true;
 		
 		} catch (err) {

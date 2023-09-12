@@ -407,7 +407,7 @@ app.get('/bucket/waitFor/:bucket', (req, res) => {
 app.get('/bucket/isCacheReady/:bucket', (req, res) => {
 	var s3 = new S3(req.session.aws);
 	var cachePath = s3.makeCacheFile(req.params.bucket, req.session.username);
-	res.send(fs.existsSync(cachePath));
+	res.send({ready: fs.existsSync(cachePath), objectCount: fs.readFileSync(cachePath + ".count").toString()});
 });
 
 app.get('/explore/:bucket', (req, res) => {
