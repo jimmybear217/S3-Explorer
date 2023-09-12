@@ -17,7 +17,7 @@
                 data.text().then((text) => {
                     if (text === 'true') {
                         document.getElementById("status").innerText = 'Bucket cached, redirecting...'
-                        window.location.href = '/bucket/<%= bucketName %>'
+                        window.location.href = '/explore/<%= bucketName %>'
                     }
                 })
             })
