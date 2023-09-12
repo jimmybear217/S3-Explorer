@@ -165,7 +165,10 @@ app.get('/icon/:mime', (req, res) => {
 	var mime = req.params.mime;
 	switch (mime) {
 		case "folder":
-			res.sendFile(__dirname + "/assets/icons/folder-cyan.svg");
+			res.sendFile(__dirname + "/assets/icons/folder-breeze.svg");
+			break;
+		case "folder-back":
+			res.sendFile(__dirname + "/assets/icons/folder-bluegrey.svg");
 			break;
 		case "image":
 			res.sendFile(__dirname + "/assets/icons/image-x-generic.svg");
