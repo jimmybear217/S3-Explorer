@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Explorer</title>
+</head>
+<body>
+    <header>
+        <a href="/"><button>Home</button></a>
+        <h1>S3 Explorer</h1>
+    </header>
+    <fieldset>
+        <legend style="color: red">Danger Zone</legend>
+        <h2>Are you sure?</h2>
+        <p>
+            You're about to delete existing cache data for bucket <strong><%= bucketName %></strong>.<br>
+            This action cannot be undone. It will trigger reading all the data of the bucket again.<br>
+            In large buckets, this will cause to take a long time, and cost a lot of operations.<br>
+            Are you sure you want to continue?
+        </p>
+        <form method="post">
+            <select name="confirm">
+                <option value="no">No, I don't want to</option>
+                <option value="yes">Yes, I'm sure</option>
+            </select>
+            <input type="submit" value="Delete Cache and Rebuild" />
+        </form>
+    </fieldset>
+</body>
+</html>

@@ -371,8 +371,26 @@ app.get('/bucket', (req, res) => {
 	});
 });
 
+app.get('/bucket/reache/:bucket', (req, res) => {
+	renderPage('bucketReacheConfirm.ejs', { session: req.session, bucketName: req.params.bucket }, res);
+});
+
+app.post('/bucket/reache/:bucket', (req, res) => {
+	if (req.body.confirm == "yes") {
+		var s3 = new S3(req.session.aws);
+		fs.unlinkSync(s3.makeCacheFile(req.params.bucket, req.session.username));
+		res.redirect('/bucket/cache/' + req.params.bucket);
+	} else {
+		res.redirect('/bucket');
+	}
+});
+
 app.get('/bucket/cache/:bucket', (req, res) => {
 	var s3 = new S3(req.session.aws);
+	if (fs.existsSync(s3.makeCacheFile(req.params.bucket, req.session.username))) {
+		res.redirect('/bucket/recache/' + req.params.bucket);
+		return;
+	}
 	s3.cacheAllObjects(req.params.bucket, req.session.username).then((data) => {
 		console.log("finised caching bucket " + req.params.bucket);	
 	}).catch((err) => {
