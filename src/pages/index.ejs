@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/main.css">
     <title>S3 Explorer - Home</title>
 </head>
 <body>
-    <h1>Hello, <% if (session.username) { %><%= session.username %><%} else { %>World <% } %>!</h1>
-    <ul>
+    <header>
+        <h1>Hello, <% if (session.username) { %><%= session.username %><%} else { %>World <% } %>!</h1>
+    </header>
+    <ul class="menu">
         <li><a href="/config/list">Configurations</a></li>
         <% if (session.aws.bucket) { %>
             <li><a href="/bucket">Access Bucket</a></li>

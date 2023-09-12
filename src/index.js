@@ -131,33 +131,17 @@ function renderPage(file, data, res) {
 	});
 }
 
-// setup express server pages
-app.use((req, res, next) => {
-	// set default session values
-	if (!req.session.loggedIn) {
-		req.session.loggedIn = false;
-		req.session.username = '';
-	}
-	if (!req.session.aws) {
-		req.session.aws = {
-			region: 'us-west-2',
-			accessKeyId: '',
-			secretAccessKey: ''
-		};
-	}
-	req.session.save();
-	// log request
-	if (!settings.liveMode)
-		console.log(req.method + " " + req.url + " from " + req.ip + " (" + req.headers['user-agent'] + ")");
-	next();
-});
-
+// setup static files
 app.get('/favicon.ico', (req, res) => {
 	res.sendFile(path.join(__dirname, 'assets/favicon.ico'));
 });
 
 app.get('/explorer.css', (req, res) => {
 	res.sendFile(path.join(__dirname, 'assets/explorer.css'));
+});
+
+app.get('/main.css', (req, res) => {
+	res.sendFile(path.join(__dirname, 'assets/main.css'));
 });
 
 app.get('/icon/:mime', (req, res) => {
@@ -201,6 +185,28 @@ app.get('/icon/:mime', (req, res) => {
 			res.sendFile(__dirname + "/assets/icons/unknown.svg");
 			break;
 	}
+});
+
+
+// setup express server pages
+app.use((req, res, next) => {
+	// set default session values
+	if (!req.session.loggedIn) {
+		req.session.loggedIn = false;
+		req.session.username = '';
+	}
+	if (!req.session.aws) {
+		req.session.aws = {
+			region: 'us-west-2',
+			accessKeyId: '',
+			secretAccessKey: ''
+		};
+	}
+	req.session.save();
+	// log request
+	if (!settings.liveMode)
+		console.log(req.method + " " + req.url + " from " + req.ip + " (" + req.headers['user-agent'] + ")");
+	next();
 });
 
 app.get('/', (req, res) => {

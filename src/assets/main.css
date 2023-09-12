@@ -1,0 +1,109 @@
+@charset "UTF-8";
+
+html, body {
+	font-family: 'Roboto', sans-serif;
+	font-size: 18px;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+header {
+	background-color: #fff;
+	border-bottom: 1px solid #eee;
+	height: 60px;
+	padding: 0;
+	width: 100%;
+	text-align: center;
+	margin: 0;
+	margin-bottom: 75px;
+}
+
+header button {
+	margin: 1%;
+	padding: 0.2% 1%
+}
+
+header h1 {
+	display: block;
+}
+
+header h1::before {
+	content: url("/favicon.ico");
+	margin: 1%;
+	vertical-align: middle;
+}
+
+h1 .dynamic, h2 .dynamic {
+	font-weight: normal;
+}
+
+
+ul.menu {
+	margin: 2% 5%;
+	text-align: center;
+	padding: 0;
+}
+
+ul.menu li {
+	display: inline-block;
+	list-style: none;
+	margin: 0;
+	padding: 0 2%;
+	cursor: pointer;
+}
+
+ul.menu li a {
+	color: #000;
+}
+
+ul.menu li a:hover, ul.menu li a.active {
+	color: #333;
+	text-decoration: underline;
+}
+
+div#horizonal-fieldsets {
+	margin: 0 auto;
+	width: 100%;
+	text-align: center;
+}
+
+div#horizonal-fieldsets fieldset {
+	display: inline-flex;
+	margin: 0 auto;
+	padding: 0;
+	width: 45%;
+}
+
+fieldset>legend {
+    text-align: left;
+    font-size: 1.2em;
+	margin-left: 10px;
+}
+
+fieldset form {
+	margin: 0 auto;
+	padding: 0;
+	width: 100%;
+}
+
+fieldset input, fieldset select {
+	display: block;
+	margin: 1% auto;
+	width: 80%;
+	font-size: 0.9em;
+}
+
+fieldset input[type=submit], fieldset select {
+    width: 82%
+}
+
+fieldset {
+	width: 90%;
+	margin: auto;
+}
+
+#error-page {
+	text-align: center;
+}

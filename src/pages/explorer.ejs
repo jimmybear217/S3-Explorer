@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/main.css">
     <link rel="stylesheet" href="/explorer.css">
     <title>S3 Explorer</title>
 </head>
 <body>
     <header>
-        <a href="/"><button>Home</button></a>
         <h1>S3 Explorer</h1>
+        <a href="/"><button>Home</button></a>
     </header>
     <fieldset>
-        <legend>Bucket</legend>
-        <h2 id="title"></h2>
+        <legend>Bucket Details</legend>
+        <h2>Bucket: <span id="title" class='dynamic'></span></h2>
         <p>Path: <span id="path"></span></p>
     </fieldset>
     <fieldset>

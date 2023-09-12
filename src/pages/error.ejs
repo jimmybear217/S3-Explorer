@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/main.css">
     <title>S3 Explorer - Error</title>
 </head>
 <body>
-    <h1>Something went wrong</h1>
-    <p>Sorry about that.</p>
-    <pre><%= errorMessage.text %></pre>
-    <% if (errorMessage.goBackButton) { %>
-        <a href="<%= errorMessage.goBackButtonUrl %>"><%= errorMessage.goBackButtonText %></a>
-    <% } %>
+    <header>
+        <h1>Something went wrong</h1>
+
+    </header>
+    <div id="error-page">
+        <p>Sorry about that.</p>
+        <pre><%= errorMessage.text %></pre>
+        <% if (errorMessage.goBackButton) { %>
+            <a href="<%= errorMessage.goBackButtonUrl %>"><%= errorMessage.goBackButtonText %></a>
+        <% } %>
+    </div>
 </body>
 </html>

@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/main.css">
     <title>S3 Explorer - Bucket - <%= bucketName %></title>
 </head>
 <body>
     <header>
+        <h1>S3 Explorer - Bucket: <span class='dynamic'><%= bucketName %></span></h1>
         <a href="/"><button>Home</button></a>
-        <h1>S3 Explorer - Bucket: <%= bucketName %></h1>
     </header>
     <% if (bucketData) { %>
         <ul>

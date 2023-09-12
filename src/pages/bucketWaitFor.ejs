@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/main.css">
     <title>S3 Explorer - Waiting for bucket</title>
 </head>
 <body>
     <header>
-        <a href="/"><button>Home</button></a>
         <h1>S3 Explorer - Waiting for bucket</h1>
+        <a href="/"><button>Home</button></a>
     </header>
-    <p id="status">Waiting for bucket to be cached...</p>
+    <div id="error-page">
+    <p id="status"><span id="threedots1">...</span>Waiting for bucket to be cached<span id="threedots">...</span></p>
     <p>Cached <span id="status-count">__</span> Objects so far.</p>
     <script>
         setInterval(() => {
@@ -35,6 +37,33 @@
                 }
             }
         }, 100);
+        setInterval(() => {
+            var threedots = document.getElementById("threedots")
+            var threedots1 = document.getElementById("threedots1")
+            switch (threedots.innerText) {
+                case '.':
+                    threedots.innerText = '..'
+                    threedots1.innerText = '..'
+                    break;
+
+                case '..':
+                    threedots.innerText = '...'
+                    threedots1.innerText = '...'
+                    break;
+
+                case '...':
+                    threedots.innerText = ''
+                    threedots1.innerText = ''
+                    break;
+            
+                case '':
+                default:
+                    threedots.innerText = '.'
+                    threedots1.innerText = '.'
+                    break;
+            }
+        }, 500);
     </script>
+    </div>
 </body>
 </html>
