@@ -14,6 +14,9 @@
     <div id="error-page">
         <p>Sorry about that.</p>
         <pre><%= errorMessage.text %></pre>
+        <% if (errorMessage.historyBackButton) { %>
+            <a href="javascript:history.go(-1)">Back</a>
+        <% } %>
         <% if (errorMessage.goBackButton) { %>
             <a href="<%= errorMessage.goBackButtonUrl %>"><%= errorMessage.goBackButtonText %></a>
         <% } %>

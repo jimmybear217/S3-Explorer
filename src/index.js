@@ -47,27 +47,31 @@ if (!settings.errors || !settings.errors[401] || !settings.errors[404] || !setti
 	newSettings.errors = {
 				"401": {
 					"text": "Authentication Faulre",
+					"historyBackButton": true,
 					"goBackButton": true,
 					"goBackButtonUrl": "/config/list",
 					"goBackButtonText": "Configurations"
 				},
 				"404": {
-						"text": "404 - Page not found",
-						"goBackButton": true,
-						"goBackButtonUrl": "/",
-						"goBackButtonText": "Home"
+					"text": "404 - Page not found",
+					"historyBackButton": true,
+					"goBackButton": true,
+					"goBackButtonUrl": "/",
+					"goBackButtonText": "Home"
 				},
 				"500": {
-						"text": "Internal Server Error",
-						"goBackButton": true,
-						"goBackButtonUrl": "/",
-						"goBackButtonText": "Home"
+					"text": "Internal Server Error",
+					"historyBackButton": false,
+					"goBackButton": true,
+					"goBackButtonUrl": "/",
+					"goBackButtonText": "Home"
 				},
 				"501": {
-						"text": "An unknown error occured",
-						"goBackButton": true,
-						"goBackButtonUrl": "/",
-						"goBackButtonText": "Home"
+					"text": "An unknown error occured",
+					"historyBackButton": false,
+					"goBackButton": true,
+					"goBackButtonUrl": "/",
+					"goBackButtonText": "Home"
 				}
 	};
 	doRestart = true;
