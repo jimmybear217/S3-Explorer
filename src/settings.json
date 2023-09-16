@@ -8,6 +8,12 @@
         "saltRounds": 10
     },
     "errors": {
+        "401": {
+            "text": "Authentication Faulre",
+            "goBackButton": true,
+            "goBackButtonUrl": "/config/list",
+            "goBackButtonText": "Configurations"
+        },
         "404": {
             "text": "404 - Page not found",
             "goBackButton": true,

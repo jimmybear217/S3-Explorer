@@ -25,20 +25,27 @@
         const bucketName = window.location.pathname.split('/')[2];
         document.getElementById('title').innerText = bucketName;
         let path = document.getElementById('path').innerText;
-        document.getElementById('path').addEventListener("click", () => {
+        document.getElementById('path').parentElement.addEventListener("click", () => {
             path = prompt('Enter path', path);
-            document.getElementById('path').innerText = path;
-            getFiles(path);
+            if (path == null)
+                path = "";
+            if (path == "..")
+                goUp();
+            else
+                getFiles(path);
         })
 
         function getFiles(path="") {
             // process
+            if (!path.endsWith("/")) path += "/";
+            if (path.startsWith("/")) path = path.substring(1);
             while (path.includes("//")) path = path.replace("//", "/");
             if (path == "/") path = "";
             // remove existing files
             document.getElementById('files').innerHTML = '<li>loading...</li>';
             // update path
             document.getElementById('path').innerText = path;
+            // windows.location.replace("#"+path)
             // fetch new files
             fetch('/api/bucket/'+bucketName+"?folder="+path).then((data) =>{
                 // add new files
@@ -131,7 +138,10 @@
 
             document.onreadystatechange = () => {
                 if (document.readyState === 'complete') {
-                    getFiles();
+                    // get anchor from url and set path
+                    var path= "";
+                    path = window.location.hash.replace("#", "");
+                    getFiles(path);
                 }
             };
     </script>

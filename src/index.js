@@ -43,8 +43,14 @@ if (!settings.secureKey) {
 	doRestart = true;
 	settingsChanged = true;
 }
-if (!settings.errors || !settings.errors[404] || !settings.errors[500] || !settings.errors[501]) {
+if (!settings.errors || !settings.errors[401] || !settings.errors[404] || !settings.errors[500] || !settings.errors[501]) {
 	newSettings.errors = {
+				"401": {
+					"text": "Authentication Faulre",
+					"goBackButton": true,
+					"goBackButtonUrl": "/config/list",
+					"goBackButtonText": "Configurations"
+				},
 				"404": {
 						"text": "404 - Page not found",
 						"goBackButton": true,
@@ -204,7 +210,7 @@ app.use((req, res, next) => {
 	}
 	req.session.save();
 	// log request
-	if (!settings.liveMode)
+	if (!settings.liveMode || req.url.includes("/api/"))
 		console.log(req.method + " " + req.url + " from " + req.ip + " (" + req.headers['user-agent'] + ")");
 	next();
 });
@@ -443,7 +449,29 @@ app.get('/api/bucket/:bucket/:object', (req, res) => {
 		res.redirect(url);
 	}).catch((err) => {
 		console.error(err);
-		res.redirect('/error?code=500');
+		switch (err.code) {
+			case "NoSuchKey":
+				res.redirect('/error?code=404');
+				break;
+
+			case "AccessDenied":
+			case "AuthFailure":
+			case "CredentialsProviderError":
+			case "ExpiredToken":
+			case "InvalidAccessKeyId":
+			case "InvalidClientTokenId":
+			case "InvalidToken":
+			case "MissingAuthenticationToken":
+			case "MissingCredentials":
+			case "RequestExpired":
+			case "TokenRefreshRequired":
+				res.redirect('/error?code=401');
+				break;
+
+			default:
+				res.redirect('/error?code=500');
+			break;
+		}
 	});
 });
 
