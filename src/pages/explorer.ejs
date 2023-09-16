@@ -46,7 +46,7 @@
             document.getElementById('files').innerHTML = '<li>loading...</li>';
             // update path
             document.getElementById('path').innerText = path;
-            // windows.location.replace("#"+path)
+            window.location.replace("#"+path)
             // fetch new files
             fetch('/api/bucket/'+bucketName+"?folder="+path).then((data) =>{
                 if (data.status == 401) {
