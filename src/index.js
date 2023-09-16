@@ -332,6 +332,11 @@ if (settings.allowLogin) {
 				nextUrl = (nextUrl == "" && req.url) ? encodeURIComponent(req.url) : nextUrl;		// set nextUrl to current url if original url is not set
 				nextUrl = (req.query.nextUrl) ? encodeURIComponent(req.query.nextUrl) : nextUrl;	// set nextUrl to nextUrl query parameter if set
 				var redirectUrl = '/login' + ((nextUrl != "") ? '?nextUrl=' + nextUrl : '');
+				if (req.url.includes("/api/")) {
+					res.status(401);
+					res.send("Not logged in");
+					return;
+				}
 				res.redirect(redirectUrl);
 				console.log("Redirecting to " + redirectUrl)
 				return;
@@ -507,7 +512,7 @@ app.get('/api/bucket/:bucket/size', (req, res) => {
 
 // handle page not found error
 app.use((req, res, next) => {
-	res.redirect('/error?code=404&page=' + encodeURIComponent(req.originalUrl));
+	res.redirect('/error?code=404');
 	return;
 });
 

@@ -48,6 +48,15 @@
             // windows.location.replace("#"+path)
             // fetch new files
             fetch('/api/bucket/'+bucketName+"?folder="+path).then((data) =>{
+                if (data.status == 401) {
+                    window.location.replace("/login");
+                    return
+                }
+                if (data.status != 200){
+                    console.error(data.status, data.statusText);
+                    document.getElementById('files').innerHTML = '<li>error loading files</li>';
+                    return
+                }
                 // add new files
                 data.json().then((jsonData) => {
                     console.log(jsonData);
