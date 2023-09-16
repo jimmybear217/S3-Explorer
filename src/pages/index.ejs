@@ -11,16 +11,18 @@
         <h1>Hello, <% if (session.username) { %><%= session.username %><%} else { %>World <% } %>!</h1>
     </header>
     <ul class="menu">
-        <li><a href="/config/list">Configurations</a></li>
         <% if (session.aws.bucket) { %>
             <li><a href="/bucket">Access Buckets</a></li>
         <% } %>
         <% if (showLogin) { %>
             <% if (session.loggedIn) { %>
+                <li><a href="/config/list">Configurations</a></li>
                 <li><a href="/logout">Logout</a></li>
             <% } else { %>
                 <li><a href="/login">Login</a></li>
             <% } %>
+        <% } else { %>
+            <li><a href="/config/list">Configurations</a></li>
         <% } %>
     </ul>
 </body>
